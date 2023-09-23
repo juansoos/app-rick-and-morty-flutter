@@ -10,7 +10,7 @@ abstract class CustomFontWeight {
 }
 
 abstract class CustomTypography {
-  static const _fontName = 'Default';
+  static const _fontName = 'Lato';
   static const _color800 = CustomColors.primary800;
   static const _color600 = CustomColors.primary600;
   static const _color300 = CustomColors.primary300;
