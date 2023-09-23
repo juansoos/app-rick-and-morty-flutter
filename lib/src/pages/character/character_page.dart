@@ -14,29 +14,27 @@ class CharacterPage extends ConsumerStatefulWidget {
 
 class _CharacterPageState extends ConsumerState<CharacterPage> {
   final ScrollController _scrollController = ScrollController();
+  late CharacterProvider _provider;
 
   @override
   void initState() {
     super.initState();
 
-    final repository = ref.read(characterProvider);
+    _provider = ref.read(characterProvider);
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      repository.onInit();
+      _provider.onInit();
     });
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        repository.fetchMoreCharacters();
-      }
-    });
+    _scrollController.addListener(onEndReached);
   }
 
   @override
   void dispose() {
     super.dispose();
 
+    _provider.dispose();
+    _scrollController.removeListener(onEndReached);
     _scrollController.dispose();
   }
 
@@ -44,15 +42,22 @@ class _CharacterPageState extends ConsumerState<CharacterPage> {
   Widget build(BuildContext context) {
     final status = ref.watch(characterProvider);
 
-    return status.isInitialLoading
-        ? const Center(child: CircularProgressIndicator())
-        : status.characters.isNotEmpty
-            ? _CharacterList(
-                characters: status.characters,
-                isLoading: status.isMoreLoadingVisible,
-                controller: _scrollController,
-              )
-            : const Center(child: Text("No hay elementos"));
+    if (status.isInitialLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return _CharacterList(
+      characters: status.characters,
+      isLoading: status.isMoreLoadingVisible,
+      controller: _scrollController,
+    );
+  }
+
+  void onEndReached() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      _provider.fetchMoreCharacters();
+    }
   }
 }
 
@@ -69,6 +74,10 @@ class _CharacterList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (characters.isEmpty) {
+      return const Center(child: Text("No hay elementos"));
+    }
+
     return Padding(
       padding: const EdgeInsets.only(right: 16, left: 16, top: 16),
       child: ListView.builder(
@@ -84,8 +93,7 @@ class _CharacterList extends StatelessWidget {
                 ? Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(16.0),
-                    child:
-                        const CircularProgressIndicator(), // You can customize this loader
+                    child: const CircularProgressIndicator(),
                   )
                 : const SizedBox.shrink();
           }
