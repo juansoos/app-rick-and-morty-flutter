@@ -11,21 +11,54 @@ class CharacterProvider extends ChangeNotifier {
   final CharacterRepository _repository;
 
   var isInitialLoading = true;
-  List<Character>? characters;
+  var isMoreLoadingVisible = false;
+  var page = 1;
+  var characters = <Character>[];
   Info? info;
 
   Future<void> onInit() async {
     try {
       final response = await _repository.getCharacters();
 
-      characters = response?.results;
+      characters = response?.results ?? [];
       info = response?.info;
+
+      if (info?.next != null) {
+        page += 1;
+      }
+
       isInitialLoading = false;
 
       notifyListeners();
     } catch (e) {
       isInitialLoading = false;
       characters = [];
+
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchMoreCharacters() async {
+    try {
+      isMoreLoadingVisible = true;
+      notifyListeners();
+
+      final response = await _repository.getCharacters(page: page);
+
+      final newCharacters = List.of(characters);
+      newCharacters.addAll(response?.results ?? []);
+
+      characters = newCharacters;
+      info = response?.info;
+      isMoreLoadingVisible = false;
+
+      if (info?.next != null) {
+        page += 1;
+      }
+
+      notifyListeners();
+    } catch (e) {
+      isMoreLoadingVisible = false;
 
       notifyListeners();
     }
