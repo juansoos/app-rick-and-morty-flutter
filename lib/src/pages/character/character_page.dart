@@ -13,6 +13,8 @@ class CharacterPage extends ConsumerStatefulWidget {
 }
 
 class _CharacterPageState extends ConsumerState<CharacterPage> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -22,6 +24,20 @@ class _CharacterPageState extends ConsumerState<CharacterPage> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       repository.onInit();
     });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        repository.fetchMoreCharacters();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _scrollController.dispose();
   }
 
   @override
@@ -30,27 +46,49 @@ class _CharacterPageState extends ConsumerState<CharacterPage> {
 
     return status.isInitialLoading
         ? const Center(child: CircularProgressIndicator())
-        : status.characters!.isNotEmpty
-            ? _CharacterList(characters: status.characters!)
+        : status.characters.isNotEmpty
+            ? _CharacterList(
+                characters: status.characters,
+                isLoading: status.isMoreLoadingVisible,
+                controller: _scrollController,
+              )
             : const Center(child: Text("No hay elementos"));
   }
 }
 
 class _CharacterList extends StatelessWidget {
-  const _CharacterList({required this.characters});
+  const _CharacterList({
+    required this.characters,
+    required this.controller,
+    required this.isLoading,
+  });
 
   final List<Character> characters;
+  final bool isLoading;
+  final ScrollController controller;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 16, left: 16, top: 16),
       child: ListView.builder(
-        itemCount: characters.length,
+        controller: controller,
+        itemCount: characters.length + 1,
         itemBuilder: (_, index) {
-          final character = characters[index];
+          if (index < characters.length) {
+            final character = characters[index];
 
-          return _CharacterItem(character: character);
+            return _CharacterItem(character: character);
+          } else {
+            return isLoading
+                ? Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.all(16.0),
+                    child:
+                        const CircularProgressIndicator(), // You can customize this loader
+                  )
+                : const SizedBox.shrink();
+          }
         },
       ),
     );
