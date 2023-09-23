@@ -1,4 +1,5 @@
 import 'package:app_rick_and_morty_flutter/src/api/model/character.dart';
+import 'package:app_rick_and_morty_flutter/src/config/typography.dart';
 import 'package:app_rick_and_morty_flutter/src/pages/character/character_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -47,10 +48,47 @@ class _CharacterList extends StatelessWidget {
       child: ListView.builder(
         itemCount: characters.length,
         itemBuilder: (_, index) {
-          final item = characters[index];
+          final character = characters[index];
 
-          return Text(item.name ?? '');
+          return _CharacterItem(character: character);
         },
+      ),
+    );
+  }
+}
+
+class _CharacterItem extends StatelessWidget {
+  const _CharacterItem({required this.character});
+
+  final Character character;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(character.image!, height: 150, width: 150),
+          ),
+          const SizedBox(width: 40),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  character.name!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: CustomTypography.title1,
+                ),
+                Text(character.gender!, style: CustomTypography.body1),
+                Text(character.species!, style: CustomTypography.caption1),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
