@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:app_rick_and_morty_flutter/src/pages/character/character_page.dart';
-import 'package:app_rick_and_morty_flutter/src/pages/episodes/episodes_page.dart';
+import 'package:app_rick_and_morty_flutter/src/pages/episode/episode_page.dart';
 import 'package:app_rick_and_morty_flutter/src/pages/home/home_provider.dart';
 import 'package:app_rick_and_morty_flutter/src/pages/location/location_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,7 +28,7 @@ class HomePage extends ConsumerWidget {
   static const List<Widget> _widgetOptions = <Widget>[
     CharacterPage(),
     LocationPage(),
-    EpisodesPage(),
+    EpisodePage(),
   ];
 }
 
