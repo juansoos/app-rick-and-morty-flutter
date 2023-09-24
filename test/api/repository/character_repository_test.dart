@@ -1,4 +1,4 @@
-import 'package:app_rick_and_morty_flutter/src/api/model/response.dart';
+import 'package:app_rick_and_morty_flutter/src/api/model/character_response.dart';
 import 'package:app_rick_and_morty_flutter/src/api/repository/character_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -15,7 +15,7 @@ void main() {
 
   group('.getCharacters', () {
     group('on success from remote', () {
-      late Response? result;
+      late CharacterResponse? result;
 
       setUpAll(() async {
         when(service.get(any)).thenAnswer(
@@ -29,7 +29,7 @@ void main() {
       });
 
       test('it returns a success', () {
-        expect(result, isA<Response>());
+        expect(result, isA<CharacterResponse>());
       });
     });
   });

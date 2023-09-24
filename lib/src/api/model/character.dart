@@ -42,27 +42,6 @@ class Character {
     url = json['url'];
     created = json['created'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    data['status'] = status;
-    data['species'] = species;
-    data['type'] = type;
-    data['gender'] = gender;
-    if (origin != null) {
-      data['origin'] = origin!.toJson();
-    }
-    if (location != null) {
-      data['location'] = location!.toJson();
-    }
-    data['image'] = image;
-    data['episode'] = episode;
-    data['url'] = url;
-    data['created'] = created;
-    return data;
-  }
 }
 
 class Origin {
@@ -74,12 +53,5 @@ class Origin {
   Origin.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     url = json['url'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['name'] = name;
-    data['url'] = url;
-    return data;
   }
 }

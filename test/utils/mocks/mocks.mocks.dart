@@ -6,7 +6,8 @@
 import 'dart:async' as _i4;
 
 import 'package:app_rick_and_morty_flutter/src/api/http_client.dart' as _i3;
-import 'package:app_rick_and_morty_flutter/src/api/model/response.dart' as _i6;
+import 'package:app_rick_and_morty_flutter/src/api/model/character_response.dart'
+    as _i6;
 import 'package:app_rick_and_morty_flutter/src/api/repository/character_repository.dart'
     as _i5;
 import 'package:http/http.dart' as _i2;
@@ -87,13 +88,13 @@ class MockCharacterRepository extends _i1.Mock
   }
 
   @override
-  _i4.Future<_i6.Response?> getCharacters({int? page = 1}) =>
+  _i4.Future<_i6.CharacterResponse?> getCharacters({int? page = 1}) =>
       (super.noSuchMethod(
         Invocation.method(
           #getCharacters,
           [],
           {#page: page},
         ),
-        returnValue: _i4.Future<_i6.Response?>.value(),
-      ) as _i4.Future<_i6.Response?>);
+        returnValue: _i4.Future<_i6.CharacterResponse?>.value(),
+      ) as _i4.Future<_i6.CharacterResponse?>);
 }
