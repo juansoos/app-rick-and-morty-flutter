@@ -12,6 +12,8 @@ class CharacterProvider extends ChangeNotifier {
 
   var isInitialLoading = true;
   var isMoreLoadingVisible = false;
+  var hasMoreCharacters = true;
+
   var page = 1;
   var characters = <Character>[];
   Info? info;
@@ -23,11 +25,8 @@ class CharacterProvider extends ChangeNotifier {
       characters = response?.results ?? [];
       info = response?.info;
 
-      if (info?.next != null) {
-        page += 1;
-      }
-
       isInitialLoading = false;
+      hasMoreCharacters = info?.next != null;
 
       notifyListeners();
     } catch (e) {
@@ -40,23 +39,26 @@ class CharacterProvider extends ChangeNotifier {
 
   Future<void> fetchMoreCharacters() async {
     try {
-      isMoreLoadingVisible = true;
-      notifyListeners();
+      if (hasMoreCharacters) {
+        final nextPage = page + 1;
 
-      final response = await _repository.getCharacters(page: page);
+        isMoreLoadingVisible = true;
+        notifyListeners();
 
-      final newCharacters = List.of(characters);
-      newCharacters.addAll(response?.results ?? []);
+        final response = await _repository.getCharacters(page: nextPage);
 
-      characters = newCharacters;
-      info = response?.info;
-      isMoreLoadingVisible = false;
+        final newCharacters = List.of(characters);
+        newCharacters.addAll(response?.results ?? []);
 
-      if (info?.next != null) {
-        page += 1;
+        isMoreLoadingVisible = false;
+        hasMoreCharacters = response?.info?.next != null;
+
+        characters = newCharacters;
+        info = response?.info;
+        page = nextPage;
+
+        notifyListeners();
       }
-
-      notifyListeners();
     } catch (e) {
       isMoreLoadingVisible = false;
 
