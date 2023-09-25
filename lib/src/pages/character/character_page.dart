@@ -1,6 +1,7 @@
 import 'package:app_rick_and_morty_flutter/src/api/model/character.dart';
 import 'package:app_rick_and_morty_flutter/src/config/typography.dart';
 import 'package:app_rick_and_morty_flutter/src/pages/character/character_provider.dart';
+import 'package:app_rick_and_morty_flutter/src/widgets/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +50,7 @@ class _CharacterPageState extends ConsumerState<CharacterPage> {
     return _CharacterList(
       characters: status.characters,
       isLoading: status.isMoreLoadingVisible,
+      hasMoreElements: status.hasMoreCharacters,
       controller: _scrollController,
     );
   }
@@ -66,10 +68,12 @@ class _CharacterList extends StatelessWidget {
     required this.characters,
     required this.controller,
     required this.isLoading,
+    required this.hasMoreElements,
   });
 
   final List<Character> characters;
   final bool isLoading;
+  final bool hasMoreElements;
   final ScrollController controller;
 
   @override
@@ -89,13 +93,10 @@ class _CharacterList extends StatelessWidget {
 
             return _CharacterItem(character: character);
           } else {
-            return isLoading
-                ? Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(16.0),
-                    child: const CircularProgressIndicator(),
-                  )
-                : const SizedBox.shrink();
+            return Footer(
+              isLoadingVisible: isLoading,
+              hasMoreElements: hasMoreElements,
+            );
           }
         },
       ),
