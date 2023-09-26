@@ -1,6 +1,7 @@
 import 'package:app_rick_and_morty_flutter/src/api/model/episode.dart';
 import 'package:app_rick_and_morty_flutter/src/config/typography.dart';
 import 'package:app_rick_and_morty_flutter/src/pages/episode/episode_provider.dart';
+import 'package:app_rick_and_morty_flutter/src/widgets/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +50,7 @@ class _EpisodePageState extends ConsumerState<EpisodePage> {
     return _EpisodeList(
       episodes: status.episodes,
       isLoading: status.isMoreLoadingVisible,
+      hasMoreElements: status.hasMoreEpisodes,
       controller: _scrollController,
     );
   }
@@ -66,10 +68,12 @@ class _EpisodeList extends StatelessWidget {
     required this.episodes,
     required this.controller,
     required this.isLoading,
+    required this.hasMoreElements,
   });
 
   final List<Episode> episodes;
   final bool isLoading;
+  final bool hasMoreElements;
   final ScrollController controller;
 
   @override
@@ -89,13 +93,10 @@ class _EpisodeList extends StatelessWidget {
 
             return _EpisodeItem(episode: episode);
           } else {
-            return isLoading
-                ? Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(16.0),
-                    child: const CircularProgressIndicator(),
-                  )
-                : const SizedBox.shrink();
+            return Footer(
+              isLoadingVisible: isLoading,
+              hasMoreElements: hasMoreElements,
+            );
           }
         },
       ),

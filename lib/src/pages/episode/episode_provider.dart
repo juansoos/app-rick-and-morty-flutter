@@ -12,6 +12,8 @@ class EpisodeProvider extends ChangeNotifier {
 
   var isInitialLoading = true;
   var isMoreLoadingVisible = false;
+  var hasMoreEpisodes = true;
+
   var page = 1;
   var episodes = <Episode>[];
   Info? info;
@@ -23,11 +25,8 @@ class EpisodeProvider extends ChangeNotifier {
       episodes = response?.results ?? [];
       info = response?.info;
 
-      if (info?.next != null) {
-        page += 1;
-      }
-
       isInitialLoading = false;
+      hasMoreEpisodes = info?.next != null;
 
       notifyListeners();
     } catch (e) {
@@ -40,23 +39,26 @@ class EpisodeProvider extends ChangeNotifier {
 
   Future<void> fetchMoreEpisodes() async {
     try {
-      isMoreLoadingVisible = true;
-      notifyListeners();
+      if (hasMoreEpisodes) {
+        isMoreLoadingVisible = true;
+        notifyListeners();
 
-      final response = await _repository.getEpisodes(page: page);
+        final nextPage = page + 1;
 
-      final newEpisodes = List.of(episodes);
-      newEpisodes.addAll(response?.results ?? []);
+        final response = await _repository.getEpisodes(page: nextPage);
 
-      episodes = newEpisodes;
-      info = response?.info;
-      isMoreLoadingVisible = false;
+        final newEpisodes = List.of(episodes);
+        newEpisodes.addAll(response?.results ?? []);
 
-      if (info?.next != null) {
-        page += 1;
+        isMoreLoadingVisible = false;
+        hasMoreEpisodes = response?.info?.next != null;
+
+        episodes = newEpisodes;
+        info = response?.info;
+        page = nextPage;
+
+        notifyListeners();
       }
-
-      notifyListeners();
     } catch (e) {
       isMoreLoadingVisible = false;
 
