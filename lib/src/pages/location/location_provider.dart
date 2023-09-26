@@ -12,6 +12,8 @@ class LocationProvider extends ChangeNotifier {
 
   var isInitialLoading = true;
   var isMoreLoadingVisible = false;
+  var hasMoreLocations = true;
+
   var page = 1;
   var locations = <Location>[];
   Info? info;
@@ -23,11 +25,8 @@ class LocationProvider extends ChangeNotifier {
       locations = response?.results ?? [];
       info = response?.info;
 
-      if (info?.next != null) {
-        page += 1;
-      }
-
       isInitialLoading = false;
+      hasMoreLocations = info?.next != null;
 
       notifyListeners();
     } catch (e) {
@@ -40,23 +39,26 @@ class LocationProvider extends ChangeNotifier {
 
   Future<void> fetchMoreLocations() async {
     try {
-      isMoreLoadingVisible = true;
-      notifyListeners();
+      if (hasMoreLocations) {
+        isMoreLoadingVisible = true;
+        notifyListeners();
 
-      final response = await _repository.getLocations(page: page);
+        final nextPage = page + 1;
 
-      final newLocations = List.of(locations);
-      newLocations.addAll(response?.results ?? []);
+        final response = await _repository.getLocations(page: nextPage);
 
-      locations = newLocations;
-      info = response?.info;
-      isMoreLoadingVisible = false;
+        final newLocations = List.of(locations);
+        newLocations.addAll(response?.results ?? []);
 
-      if (info?.next != null) {
-        page += 1;
+        isMoreLoadingVisible = false;
+        hasMoreLocations = response?.info?.next != null;
+
+        locations = newLocations;
+        info = response?.info;
+        page = nextPage;
+
+        notifyListeners();
       }
-
-      notifyListeners();
     } catch (e) {
       isMoreLoadingVisible = false;
 

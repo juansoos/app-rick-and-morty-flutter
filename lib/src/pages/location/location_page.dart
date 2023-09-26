@@ -1,6 +1,7 @@
 import 'package:app_rick_and_morty_flutter/src/api/model/location.dart';
 import 'package:app_rick_and_morty_flutter/src/config/typography.dart';
 import 'package:app_rick_and_morty_flutter/src/pages/location/location_provider.dart';
+import 'package:app_rick_and_morty_flutter/src/widgets/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +50,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
     return _LocationList(
       locations: status.locations,
       isLoading: status.isMoreLoadingVisible,
+      hasMoreElements: status.hasMoreLocations,
       controller: _scrollController,
     );
   }
@@ -66,10 +68,12 @@ class _LocationList extends StatelessWidget {
     required this.locations,
     required this.controller,
     required this.isLoading,
+    required this.hasMoreElements,
   });
 
   final List<Location> locations;
   final bool isLoading;
+  final bool hasMoreElements;
   final ScrollController controller;
 
   @override
@@ -89,13 +93,10 @@ class _LocationList extends StatelessWidget {
 
             return _LocationItem(location: location);
           } else {
-            return isLoading
-                ? Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(16.0),
-                    child: const CircularProgressIndicator(),
-                  )
-                : const SizedBox.shrink();
+            return Footer(
+              isLoadingVisible: isLoading,
+              hasMoreElements: hasMoreElements,
+            );
           }
         },
       ),

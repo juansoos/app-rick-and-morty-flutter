@@ -40,10 +40,10 @@ class CharacterProvider extends ChangeNotifier {
   Future<void> fetchMoreCharacters() async {
     try {
       if (hasMoreCharacters) {
-        final nextPage = page + 1;
-
         isMoreLoadingVisible = true;
         notifyListeners();
+
+        final nextPage = page + 1;
 
         final response = await _repository.getCharacters(page: nextPage);
 
