@@ -65,6 +65,30 @@ class CharacterProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void onSearch(String query) {
+    final List<Character> initialCharacterList = List.of(characters);
+
+    if (query.isNotEmpty) {
+      final List<Character> charactersFiltered = [];
+
+      for (var item in initialCharacterList) {
+        final textToCompareTo = item.name!.toLowerCase();
+
+        if (textToCompareTo.contains(query.toLowerCase())) {
+          charactersFiltered.add(item);
+        }
+      }
+
+      characters = charactersFiltered;
+
+      notifyListeners();
+    } else {
+      characters = initialCharacterList;
+
+      notifyListeners();
+    }
+  }
 }
 
 final characterProvider = ChangeNotifierProvider<CharacterProvider>((ref) {
