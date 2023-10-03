@@ -65,6 +65,30 @@ class LocationProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void onSearch(String query) {
+    final List<Location> initialLocationList = List.of(locations);
+
+    if (query.isNotEmpty) {
+      final List<Location> locationsFiltered = [];
+
+      for (var item in initialLocationList) {
+        final textToCompareTo = item.name!.toLowerCase();
+
+        if (textToCompareTo.contains(query.toLowerCase())) {
+          locationsFiltered.add(item);
+        }
+      }
+
+      locations = locationsFiltered;
+
+      notifyListeners();
+    } else {
+      locations = initialLocationList;
+
+      notifyListeners();
+    }
+  }
 }
 
 final locationProvider = ChangeNotifierProvider<LocationProvider>((ref) {

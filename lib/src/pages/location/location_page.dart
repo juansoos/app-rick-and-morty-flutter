@@ -2,6 +2,7 @@ import 'package:app_rick_and_morty_flutter/src/api/model/location.dart';
 import 'package:app_rick_and_morty_flutter/src/config/typography.dart';
 import 'package:app_rick_and_morty_flutter/src/pages/location/location_provider.dart';
 import 'package:app_rick_and_morty_flutter/src/widgets/footer.dart';
+import 'package:app_rick_and_morty_flutter/src/widgets/search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,8 @@ class LocationPage extends ConsumerStatefulWidget {
 
 class _LocationPageState extends ConsumerState<LocationPage> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
   late LocationProvider _provider;
 
   @override
@@ -37,6 +40,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
     _provider.dispose();
     _scrollController.removeListener(onEndReached);
     _scrollController.dispose();
+    _searchController.dispose();
   }
 
   @override
@@ -47,11 +51,23 @@ class _LocationPageState extends ConsumerState<LocationPage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return _LocationList(
-      locations: status.locations,
-      isLoading: status.isMoreLoadingVisible,
-      hasMoreElements: status.hasMoreLocations,
-      controller: _scrollController,
+    return SafeArea(
+      child: Column(
+        children: [
+          Search(
+            controller: _searchController,
+            onChangeText: status.onSearch,
+          ),
+          Expanded(
+            child: _LocationList(
+              locations: status.locations,
+              isLoading: status.isMoreLoadingVisible,
+              hasMoreElements: status.hasMoreLocations,
+              controller: _scrollController,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
