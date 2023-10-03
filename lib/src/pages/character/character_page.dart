@@ -40,6 +40,7 @@ class _CharacterPageState extends ConsumerState<CharacterPage> {
     _provider.dispose();
     _scrollController.removeListener(onEndReached);
     _scrollController.dispose();
+    _searchController.dispose();
   }
 
   @override
