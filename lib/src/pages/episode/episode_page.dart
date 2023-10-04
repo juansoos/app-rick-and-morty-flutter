@@ -2,6 +2,7 @@ import 'package:app_rick_and_morty_flutter/src/api/model/episode.dart';
 import 'package:app_rick_and_morty_flutter/src/config/typography.dart';
 import 'package:app_rick_and_morty_flutter/src/pages/episode/episode_provider.dart';
 import 'package:app_rick_and_morty_flutter/src/widgets/footer.dart';
+import 'package:app_rick_and_morty_flutter/src/widgets/search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,8 @@ class EpisodePage extends ConsumerStatefulWidget {
 
 class _EpisodePageState extends ConsumerState<EpisodePage> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
   late EpisodeProvider _provider;
 
   @override
@@ -47,11 +50,23 @@ class _EpisodePageState extends ConsumerState<EpisodePage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return _EpisodeList(
-      episodes: status.episodes,
-      isLoading: status.isMoreLoadingVisible,
-      hasMoreElements: status.hasMoreEpisodes,
-      controller: _scrollController,
+    return SafeArea(
+      child: Column(
+        children: [
+          Search(
+            controller: _searchController,
+            onChangeText: status.onSearch,
+          ),
+          Expanded(
+            child: _EpisodeList(
+              episodes: status.episodes,
+              isLoading: status.isMoreLoadingVisible,
+              hasMoreElements: status.hasMoreEpisodes,
+              controller: _scrollController,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

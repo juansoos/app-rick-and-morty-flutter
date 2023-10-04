@@ -65,6 +65,30 @@ class EpisodeProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void onSearch(String query) {
+    final List<Episode> initialEpisodeList = List.of(episodes);
+
+    if (query.isNotEmpty) {
+      final List<Episode> episodesFiltered = [];
+
+      for (var item in initialEpisodeList) {
+        final textToCompareTo = item.name!.toLowerCase();
+
+        if (textToCompareTo.contains(query.toLowerCase())) {
+          episodesFiltered.add(item);
+        }
+      }
+
+      episodes = episodesFiltered;
+
+      notifyListeners();
+    } else {
+      episodes = initialEpisodeList;
+
+      notifyListeners();
+    }
+  }
 }
 
 final episodeProvider = ChangeNotifierProvider<EpisodeProvider>((ref) {
